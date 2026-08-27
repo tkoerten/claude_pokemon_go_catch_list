@@ -1,0 +1,27 @@
+[
+  {
+    "label": "PokemonXP",
+    "start": "2026-08-25T10:00:00",
+    "end": "2026-08-28T10:00:00",
+    "pokemon": ["Ralts", "Numel", "Spheal", "Drifloon", "Elgyem", "Sobble", "Pawmi"]
+  },
+  {
+    "label": "PokemonXP (rare)",
+    "start": "2026-08-25T10:00:00",
+    "end": "2026-08-28T10:00:00",
+    "pokemon": ["Deino"]
+  },
+  {
+    "label": "Worlds 2026",
+    "start": "2026-08-28T10:00:00",
+    "end": "2026-08-30T20:00:00",
+    "pokemon": ["Alolan Sandshrew", "Mankey", "Lickitung", "Totodile", "Wooper",
+                "Foongus", "Froakie", "Litten"]
+  },
+  {
+    "label": "Worlds 2026 (rare)",
+    "start": "2026-08-28T10:00:00",
+    "end": "2026-08-30T20:00:00",
+    "pokemon": ["Togetic", "Beldum"]
+  }
+]

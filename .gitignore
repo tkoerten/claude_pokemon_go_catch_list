@@ -1,0 +1,15 @@
+# Task brief and seed archive — not part of the deployed site
+claude-code-prompt.md
+pogo-pvp-catch-list.skill
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Node
+node_modules/
+
+# Local build artifacts
+catch-list.xlsx
+/seedout/
