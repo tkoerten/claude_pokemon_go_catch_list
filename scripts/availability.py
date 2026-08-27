@@ -2,8 +2,15 @@
 
 Raids and eggs come from the ScrapedDuck feed (a community scrape of LeekDuck).
 Wild event spawns are NOT in that feed as a species list -- it only flags that an
-event has spawns -- so those live in wild_spawns.json, which Claude refreshes by
-reading the live event pages. See SKILL.md.
+event has spawns -- so those live in wild_spawns.json, which is refreshed by
+scripts/fetch_event_spawns.py (or by hand). See SKILL.md / CLAUDE.md.
+
+The reduction logic here is unchanged from the seed. Two things were added so the
+page can stay honest:
+  * every `now` carries a machine-readable ISO `until` (not just a display string),
+    so the page can hide a window whose end has passed and score "ending soon".
+  * build() reports which feeds failed, so the page can say "availability unknown
+    today" instead of letting an empty Live-now filter read as "nothing is live".
 """
 import json, os, re, datetime, urllib.request
 
@@ -12,12 +19,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REGIONS = ["Alolan", "Galarian", "Hisuian", "Paldean"]
 
 
-def get(name):
+def get(name, failures=None):
     try:
         with urllib.request.urlopen(f"{DUCK}/{name}.json", timeout=45) as r:
             return json.load(r)
     except Exception as e:
         print(f"  warning: could not fetch {name}.json ({e})")
+        if failures is not None:
+            failures.append(name)
         return []
 
 
@@ -31,43 +40,52 @@ def norm(n):
     return re.sub(r"\s+", " ", n).strip()
 
 
-def short_date(iso):
+def _dt(iso):
     try:
-        return datetime.datetime.fromisoformat(iso.replace("Z", "")).strftime("%b %-d")
+        return datetime.datetime.fromisoformat((iso or "").replace("Z", ""))
     except Exception:
         return None
 
 
+def short_date(iso):
+    """'Aug 28'. strftime('%-d') is not portable (fails on Windows), so format by hand."""
+    d = _dt(iso)
+    return f"{d.strftime('%b')} {d.day}" if d else None
+
+
 def build(now=None):
+    """Return (avail_map, status). status.ok is False if any feed failed to load."""
     now = now or datetime.datetime.now()
     iso = now.isoformat()
+    failures = []
     out = {}
 
-    def add(name, kind, label, until=None, rank=0):
+    def add(name, kind, label, until_iso=None, rank=0):
         k = norm(name)
         if not k:
             return
         cur = out.get(k)
         if cur is None or rank > cur["rank"]:
-            out[k] = {"kind": kind, "label": label, "until": until, "rank": rank}
+            out[k] = {"kind": kind, "label": label, "until": until_iso, "rank": rank}
 
-    events = get("events")
+    events = get("events", failures)
 
     # Raid bosses, with the end date of the rotation they belong to.
     for e in events:
         rb = (e.get("extraData") or {}).get("raidbattles")
         if not rb or not ((e.get("start") or "") <= iso <= (e.get("end") or "")):
             continue
-        end = short_date(e.get("end") or "")
+        end_iso = e.get("end") or None
+        end = short_date(end_iso)
         for b in rb.get("bosses", []):
-            add(b["name"], "raid", f"Raids{' until ' + end if end else ''}", end, rank=3)
+            add(b["name"], "raid", f"Raids{' until ' + end if end else ''}", end_iso, rank=3)
 
     # Whatever is in the raid rotation right now, if no dated event covered it.
-    for b in get("raids"):
+    for b in get("raids", failures):
         add(b["name"], "raid", f"{b.get('tier', 'Raid')}", None, rank=2)
 
     # Egg pools.
-    for x in get("eggs"):
+    for x in get("eggs", failures):
         t = x["eggType"] + (" (Adventure Sync)" if x.get("isAdventureSync") else "")
         add(x["name"], "egg", f"{t} eggs", None, rank=1)
 
@@ -79,19 +97,23 @@ def build(now=None):
         for key, word in (("spotlight", "Spotlight Hour"), ("communityday", "Community Day")):
             blk = ed.get(key) or {}
             for p in blk.get("list", []) or ([blk] if blk.get("name") else []):
-                add(p["name"], "wild", word, short_date(e.get("end") or ""), rank=5)
+                add(p["name"], "wild", word, e.get("end") or None, rank=5)
 
     # Event wild spawns, hand-maintained because no feed publishes them.
     path = os.path.join(HERE, "wild_spawns.json")
     if os.path.exists(path):
-        for blk in json.load(open(path)):
+        with open(path, encoding="utf-8") as f:
+            blocks = json.load(f)
+        for blk in blocks:
             if not (blk.get("start", "") <= iso <= blk.get("end", "9999")):
                 continue
-            end = short_date(blk["end"])
+            end_iso = blk["end"]
+            end = short_date(end_iso)
             for name in blk["pokemon"]:
-                add(name, "wild", f"{blk['label']} until {end}", end, rank=4)
+                add(name, "wild", f"{blk['label']} until {end}", end_iso, rank=4)
 
-    return out
+    status = {"ok": not failures, "failed": failures}
+    return out, status
 
 
 def attach(rows, avail):
@@ -106,7 +128,8 @@ def attach(rows, avail):
                     via = b
                     break
         if hit:
-            r["now"] = {"kind": hit["kind"], "label": hit["label"], "via": via}
+            r["now"] = {"kind": hit["kind"], "label": hit["label"],
+                        "until": hit.get("until"), "via": via}
         else:
             r["now"] = None
     return rows

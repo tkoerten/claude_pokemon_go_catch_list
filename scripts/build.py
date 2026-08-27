@@ -1,17 +1,64 @@
-"""Generate the offline catch-list web page and the Excel workbook."""
-import json, os, sys
-from pvpoke_data import build_all, CATS
+"""Generate data.json for the static site (and, on request, the Excel workbook).
+
+The site is a static shell (index.html + styles.css + logic.js + app.js) that fetches
+data.json at load. This script produces data.json.
+
+  python build.py                 -> writes ../data.json (repo root)
+  python build.py path/to/dir     -> writes data.json AND catch-list.xlsx into dir
+
+Fail loud: if PvPoke 404s, build_all() raises and nothing is written. If a league
+comes back far short of its expected size, we raise before writing, so a broken
+upstream leaves the previous data.json untouched. A stale correct list beats a
+fresh broken one.
+"""
+import datetime
+import json
+import os
+import sys
+
 import availability
+from pvpoke_data import build_all
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = sys.argv[1] if len(sys.argv) > 1 else "/mnt/user-data/outputs"
+ROOT = os.path.dirname(HERE)
 TIER_LABEL = {"core": "1 - Core", "flex": "2 - Flex", "niche": "3 - Deep"}
 
+# A league dropping below this many rows means something broke upstream (see CLAUDE.md).
+MIN_ROWS = 50
 
-def write_html(data, path):
-    tpl = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
-    blob = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
-    open(path, "w", encoding="utf-8").write(tpl.replace("__DATA__", blob))
+
+def validate(data):
+    problems = []
+    for key, lg in data["leagues"].items():
+        n = len(lg["rows"])
+        if n < MIN_ROWS:
+            problems.append(f"{lg['label']}: only {n} rows (expected > {MIN_ROWS})")
+    if problems:
+        raise SystemExit("ABORT: PvPoke data looks broken, not overwriting data.json:\n  "
+                         + "\n  ".join(problems))
+
+
+def build_data():
+    data = build_all()
+    print("checking current availability...")
+    avail, status = availability.build()
+    if not status["ok"]:
+        print(f"  availability feeds failed: {', '.join(status['failed'])}")
+    data["availability"] = status
+    for lg in data["leagues"].values():
+        availability.attach(lg["rows"], avail)
+    # Stamps the page uses to detect a dead cron. "Last updated" shows the data date
+    # (gamemaster), never builtAt, so a rebuild that fetched nothing cannot look fresh.
+    data["builtAt"] = datetime.datetime.now(datetime.timezone.utc).replace(
+        microsecond=0).isoformat()
+    validate(data)
+    return data
+
+
+def write_json(data, path):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, separators=(",", ":"), ensure_ascii=False)
+        f.write("\n")
 
 
 def write_xlsx(data, path):
@@ -98,16 +145,18 @@ def write_xlsx(data, path):
 
 
 if __name__ == "__main__":
-    os.makedirs(OUT, exist_ok=True)
-    data = build_all()
-    print("checking current availability...")
-    avail = availability.build()
-    data["availability"] = len(avail)
-    for lg in data["leagues"].values():
-        availability.attach(lg["rows"], avail)
-    write_html(data, os.path.join(OUT, "catch-list.html"))
-    write_xlsx(data, os.path.join(OUT, "catch-list.xlsx"))
+    data = build_data()
+
+    if len(sys.argv) > 1:
+        out = sys.argv[1]
+        os.makedirs(out, exist_ok=True)
+        write_json(data, os.path.join(out, "data.json"))
+        write_xlsx(data, os.path.join(out, "catch-list.xlsx"))
+    else:
+        write_json(data, os.path.join(ROOT, "data.json"))
+
     for k, v in data["leagues"].items():
         n = lambda t: sum(1 for r in v["rows"] if r["tier"] == t)
         print(f"{v['label']}: {len(v['rows'])} targets ({n('core')} core, {n('flex')} flex, {n('niche')} deep)")
     print("gamemaster", data["gamemaster"])
+    print("built at", data["builtAt"])
