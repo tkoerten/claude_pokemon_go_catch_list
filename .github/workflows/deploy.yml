@@ -1,0 +1,81 @@
+name: Build and deploy
+
+# Nightly at 09:00 UTC, on manual dispatch, and on every push to main.
+# - schedule/dispatch: refresh the data (spawns -> rankings -> availability),
+#   commit only if it actually changed, then deploy.
+# - push: deploy the site with the data.json already in the repo.
+on:
+  schedule:
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write        # to commit a refreshed data.json / wild_spawns.json
+  pages: write           # to deploy to Pages
+  id-token: write        # required by deploy-pages
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install openpyxl
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Tests run first and gate everything. A broken parser or logic change fails
+      # the build instead of shipping a bad list.
+      - name: Tests
+        run: |
+          python -m unittest discover -s tests -p "test_*.py"
+          node --test tests/logic.test.js
+
+      # Only refresh data on the scheduled/manual runs, not on ordinary code pushes.
+      - name: Refresh event spawns (fail-soft)
+        if: github.event_name != 'push'
+        run: python scripts/fetch_event_spawns.py
+
+      - name: Rebuild data.json (fail-loud)
+        if: github.event_name != 'push'
+        run: python scripts/build.py
+
+      - name: Commit data if it changed
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data.json scripts/wild_spawns.json
+          if git diff --cached --quiet; then
+            echo "No data change — skipping commit."
+          else
+            git commit -m "Nightly data refresh ($(date -u +%Y-%m-%d))"
+            git push
+          fi
+
+      # Assemble a clean site root (no scripts/, tests/, .git) for Pages.
+      - name: Stage site
+        run: |
+          mkdir _site
+          cp index.html styles.css logic.js app.js data.json manifest.json icon.svg sw.js _site/
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

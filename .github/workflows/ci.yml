@@ -1,0 +1,22 @@
+name: Tests
+
+# Validate pull requests. Pushes to main are already tested by the deploy workflow.
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Python tests
+        run: python -m unittest discover -s tests -p "test_*.py"
+      - name: Node tests
+        run: node --test tests/logic.test.js
