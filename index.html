@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EDEFE8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Catch List">
+<meta name="description" content="Pokémon GO PvP catch list — what to catch and for which league, built from PvPoke rankings. Works offline.">
+<title>Catch List</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="masthead"><h1>Catch List</h1><span class="stamp" id="stamp"></span></div>
+  <div class="notice" id="notice" hidden></div>
+  <div class="search">
+    <input type="search" id="q" placeholder="Type a Pokémon name" autocomplete="off"
+           autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Search Pokémon">
+    <button class="clear" id="clear" aria-label="Clear search">&times;</button>
+  </div>
+  <div class="seg" id="leagues" role="group" aria-label="League"></div>
+  <div class="chips" id="filters"></div>
+</header>
+
+<section class="focus" id="focus" hidden aria-label="Focus today"></section>
+
+<div class="count" id="count"></div>
+<div id="list">
+  <div class="empty" id="boot"><b>Loading the catch list…</b>
+    If this message stays, the data file didn’t load — check your connection and reload.</div>
+</div>
+<footer id="foot"></footer>
+</div>
+<script src="logic.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

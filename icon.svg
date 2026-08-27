@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Catch List">
+  <rect width="512" height="512" rx="112" fill="#0F7A4A"/>
+  <circle cx="256" cy="256" r="150" fill="#EDEFE8"/>
+  <path d="M106 256a150 150 0 0 1 300 0Z" fill="#17231C"/>
+  <rect x="106" y="240" width="300" height="32" fill="#17231C"/>
+  <circle cx="256" cy="256" r="52" fill="#EDEFE8"/>
+  <circle cx="256" cy="256" r="52" fill="none" stroke="#17231C" stroke-width="18"/>
+  <circle cx="256" cy="256" r="22" fill="#EDEFE8"/>
+</svg>

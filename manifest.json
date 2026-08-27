@@ -1,0 +1,15 @@
+{
+  "name": "Pokémon GO PvP Catch List",
+  "short_name": "Catch List",
+  "description": "What to catch and for which league, from PvPoke rankings. Works offline.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EDEFE8",
+  "theme_color": "#EDEFE8",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}
