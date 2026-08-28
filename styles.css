@@ -50,12 +50,37 @@ input[type=search]:focus{outline:3px solid var(--chrome);outline-offset:1px;bord
 .count{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em;
   text-transform:uppercase;margin:2px 0 10px}
 
+/* Guide panel: IV reminder + type chart */
+.guide-btn{margin-left:6px;border:1.5px solid var(--line);background:var(--card);color:var(--muted);
+  font-family:var(--sans);font-size:12px;font-weight:700;padding:6px 11px;border-radius:99px;cursor:pointer;white-space:nowrap}
+.guide-btn[aria-expanded=true]{border-color:var(--chrome);color:var(--chrome)}
+.guide-btn:focus-visible{outline:3px solid var(--chrome);outline-offset:2px}
+.guide{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:0 0 16px}
+.guide[hidden]{display:none}
+.guide h3{font-size:13px;font-weight:800;letter-spacing:.02em;margin:0 0 6px}
+.guide h3.sp{margin-top:16px}
+.iv{margin-bottom:4px}
+.iv dt{font-size:12px;font-weight:800;color:var(--chrome);text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
+.iv dd{margin:2px 0 0;font-size:13px;color:var(--ink);line-height:1.45}
+.typegrid{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 10px}
+.tbtn{border:0;border-radius:6px;padding:5px 9px;font-family:var(--sans);font-size:11px;font-weight:800;
+  color:#fff;cursor:pointer;opacity:.55;text-transform:uppercase;letter-spacing:.03em}
+.tbtn[aria-pressed=true]{opacity:1;box-shadow:0 0 0 2px var(--ink)}
+.tbtn:focus-visible{outline:3px solid var(--chrome);outline-offset:2px}
+.matchup{font-size:13px;line-height:1.5}
+.matchup .row{margin-top:7px}
+.matchup .lab{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.tpill{display:inline-block;color:#fff;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;margin:2px 3px 0 0}
+.matchup .none-txt{color:var(--muted);font-style:italic}
+
 /* Focus today */
 .focus{margin:0 0 16px}
 .focus h2{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
   color:var(--muted);margin:14px 0 7px}
 .focus h2:first-child{margin-top:0}
 .focus h2.soon{color:var(--maybe)}
+.focus h2.ever{color:var(--depth)}
+.focus li.ever::before{background:var(--depth)}
 .focus ul{list-style:none;margin:0;padding:0}
 .focus li{background:var(--card);border:1px solid var(--line);border-radius:10px;
   padding:9px 12px 9px 14px;margin-bottom:6px;position:relative;overflow:hidden;
@@ -110,9 +135,11 @@ input[type=search]:focus{outline:3px solid var(--chrome);outline-offset:1px;bord
 .now .dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex:none}
 .chip[data-live][aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
 
-.ranks{display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:11px;
-  padding-top:11px;border-top:1px solid var(--line)}
-.card.open .ranks{display:grid}
+.note{font-size:13px;font-weight:600;color:var(--ink);margin-top:8px;line-height:1.4}
+
+.ranks{display:none;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;
+  padding-top:10px;border-top:1px solid var(--line)}
+.ranks.show,.card.open .ranks{display:grid}
 .rank{text-align:center}
 .rank .k{font-family:var(--mono);font-size:9px;letter-spacing:.09em;color:var(--muted);text-transform:uppercase}
 .rank .v{font-family:var(--mono);font-size:17px;font-weight:600;margin-top:1px}

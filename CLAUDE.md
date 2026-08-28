@@ -53,8 +53,15 @@ time. These rules are settled — follow them, don't re-litigate them.
 - **Bake everything at build time.** A kid opening the page must trigger **no
   third-party fetch** — only the relative `data.json` load. No frameworks, CSS
   libraries, webfonts, database, login, or runtime API.
-- System font stack only, high contrast for outdoor use, answer-first: the verdict and
-  name readable without tapping, ranks collapsed until a card is tapped.
+- System font stack only, high contrast for outdoor use, answer-first: name, verdict,
+  a one-line **action note** (catch / check IVs / hunt a hundo + XL / store candy), and
+  **all four role ranks** (Overall · Lead · Switch · Closer) are readable without
+  tapping. Overall alone can mislead, so it never drives the order or the verdict; a tap
+  only reveals extra prose.
+- An **IV & type guide** (one tap from the header) carries the IV reminder and an
+  interactive type-matchup lookup. Type data is the standard chart, baked in — no fetch.
+- **Focus today** also carries an "Always worth catching" group of top wild cores
+  (Mimikyu, Rookidee…) so the morning view answers "what today?" even with no events.
 - Keep the list **alphabetical within tier** and the UI simple enough for kids.
 - "Last updated" shows the **data date** (gamemaster), never the build date.
 

@@ -17,10 +17,14 @@ For **Great**, **Ultra**, and **Master** league:
 
 - **Core / Flex / Deep** tiers from PvPoke's top-75 across Overall / Lead / Switch /
   Closer. One row per catch family, keeping the best rank any form (Shadow included)
-  reaches, since a family shares a candy pool.
-- **Focus today** at the top: at most six things worth your time right now, derived from
-  the data — split into *Ending soon* (a window closing within 48 hours) and
-  *Worth your time*.
+  reaches, since a family shares a candy pool. Every card shows **all four role ranks**
+  and a one-line **action note** — *catch & check IVs* (GL/UL), *hunt a hundo + save XL*
+  (Master), *store candy* (Shadow-only), or *skip*.
+- **Focus today** at the top: *Ending soon* (a window closing within 48 hours),
+  *Worth your time* (live now), and *Always worth catching* (evergreen wild cores like
+  Mimikyu), so the morning glance answers "what today?" even on a quiet week.
+- **IV & type guide** (one tap from the header): the IV reminder and an interactive
+  type-matchup lookup — tap a type to see what it beats and what beats it.
 - **Search anything.** The default list is only the good targets, but you can search
   *any* Pokémon at any evolution stage. A weak one gets an honest **"don't catch"** with
   the reason — a real low PvPoke rank ("Switch #230 at best") or "not in PvPoke's

@@ -184,3 +184,57 @@ test("searchFamilies: better-in-another-league sorts ahead of dead skips", () =>
   // Dialga (has a better league) should come before pure skips/unranked.
   assert.equal(r[0].target, "Dialga");
 });
+
+// ---- action notes ---------------------------------------------------------
+test("actionNote: Master says hunt a hundo", () => {
+  assert.match(L.actionNote(row({}), "master"), /hundo/);
+});
+test("actionNote: Great/Ultra says appraise for IVs", () => {
+  assert.match(L.actionNote(row({ tier: "core" }), "great"), /Defense & HP/);
+});
+test("actionNote: Shadow-only says store candy", () => {
+  assert.match(L.actionNote(row({ avail: "Shadow only" }), "great"), /Store candy/);
+});
+test("actionNote: XL flag is mentioned for GL/UL", () => {
+  assert.match(L.actionNote(row({ xl: true }), "ultra"), /XL candy/);
+});
+
+// ---- evergreen picks ------------------------------------------------------
+test("computeFocus: evergreen surfaces top wild cores not already live", () => {
+  const d = data({
+    great: {
+      rows: [
+        row({ target: "Mimikyu", tier: "core", section: "wild", overall: 1, bestRole: "Closer #1", now: null }),
+        row({ target: "Regidrago", tier: "core", section: "raid", overall: 2, now: null }),  // raid -> excluded
+        row({ target: "Spheal", tier: "core", section: "wild", overall: 5,
+              now: { kind: "wild", label: "Boosted", until: "2026-08-28T10:00:00" } })       // live -> excluded
+      ]
+    }
+  });
+  const f = L.computeFocus(d, NOW);
+  const names = f.evergreen.map(e => e.target);
+  assert.ok(names.includes("Mimikyu"));
+  assert.ok(!names.includes("Regidrago"));   // raids aren't "catch any day"
+  assert.ok(!names.includes("Spheal"));      // already in a live group
+  assert.match(L.evergreenLine(f.evergreen[0]), /Mimikyu — GL core, #1 Closer\. Always worth a catch\./);
+});
+
+// ---- type chart -----------------------------------------------------------
+test("typeChart: Water offense and defense are correct", () => {
+  const off = L.typeOffense("Water");
+  assert.deepEqual(off.strong.sort(), ["Fire", "Ground", "Rock"].sort());
+  const def = L.typeDefense("Water");
+  assert.deepEqual(def.weakTo.sort(), ["Electric", "Grass"].sort());
+});
+test("typeChart: Ghost has no effect on Normal, and vice versa", () => {
+  assert.ok(L.typeOffense("Ghost").none.includes("Normal"));
+  assert.ok(L.typeDefense("Ghost").immune.includes("Normal"));   // Normal can't hit Ghost
+});
+test("typeChart: every referenced type is one of the 18", () => {
+  const set = new Set(L.TYPES);
+  assert.equal(L.TYPES.length, 18);
+  L.TYPES.forEach(function (t) {
+    const o = L.typeOffense(t);
+    o.strong.concat(o.weak, o.none).forEach(function (x) { assert.ok(set.has(x), t + " -> " + x); });
+  });
+});

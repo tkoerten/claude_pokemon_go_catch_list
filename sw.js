@@ -4,7 +4,7 @@
  *   data.json: network-first — a phone must not get stuck on last week's list;
  *     the nightly rebuild is worthless if the cache never lets it through.
  * Bump CACHE whenever the shell changes so the old one is evicted on activate. */
-var CACHE = "catch-list-v3";
+var CACHE = "catch-list-v4";
 var SHELL = [
   "./", "index.html", "styles.css", "logic.js", "app.js", "manifest.json", "icon.svg"
 ];

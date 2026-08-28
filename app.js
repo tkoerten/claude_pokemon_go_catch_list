@@ -13,6 +13,7 @@
 
   var VERDICT = { core: "Catch it", flex: "Worth a ball", niche: "Only if you want it" };
   var CODE_KEY = { GL: "great", UL: "ultra", ML: "master" };
+  var TIER_ORDER = { core: 0, flex: 1, niche: 2 };
   var state = {
     league: "great", q: "", live: false,
     tiers: new Set(["core", "flex"]), sections: new Set(["wild", "raid"])
@@ -42,6 +43,7 @@
     renderNotices(now);
     renderLeagues();
     renderFilters();
+    renderGuide();
     renderFocus(now);
     wireEvents();
     sync();
@@ -100,11 +102,14 @@
   function renderFocus(now) {
     var f = L.computeFocus(DATA, now);
     var host = $("focus");
-    if (!f.endingSoon.length && !f.worth.length) { host.hidden = true; return; }
+    if (!f.endingSoon.length && !f.worth.length && !f.evergreen.length) {
+      host.hidden = true; return;
+    }
     host.hidden = false;
     var html = "";
-    if (f.endingSoon.length) html += focusGroup("Ending soon", f.endingSoon, true);
-    if (f.worth.length) html += focusGroup("Worth your time", f.worth, false);
+    if (f.endingSoon.length) html += focusGroup("Ending soon", f.endingSoon, "soon", L.focusLine);
+    if (f.worth.length) html += focusGroup("Worth your time", f.worth, "", L.focusLine);
+    if (f.evergreen.length) html += focusGroup("Always worth catching", f.evergreen, "ever", L.evergreenLine);
     host.innerHTML = html;
     host.onclick = function (e) {
       var li = e.target.closest("li"); if (!li) return;
@@ -117,15 +122,15 @@
     };
   }
 
-  function focusGroup(heading, entries, soon) {
-    return '<h2' + (soon ? ' class="soon"' : "") + ">" + esc(heading) + "</h2><ul>"
+  function focusGroup(heading, entries, cls, lineFn) {
+    return '<h2' + (cls ? ' class="' + cls + '"' : "") + ">" + esc(heading) + "</h2><ul>"
       + entries.map(function (en) {
-        var line = L.focusLine(en);
+        var line = lineFn(en);
         var dash = line.indexOf(" — ");
         var name = dash >= 0 ? line.slice(0, dash) : en.target;
         var why = dash >= 0 ? line.slice(dash + 3) : line;
         var key = CODE_KEY[en.anchor.code] || "great";
-        return '<li' + (soon ? ' class="soon"' : "") + ' tabindex="0" role="button"'
+        return '<li' + (cls ? ' class="' + cls + '"' : "") + ' tabindex="0" role="button"'
           + ' data-key="' + esc(key) + '" data-target="' + esc(en.target) + '">'
           + "<b>" + esc(name) + "</b> — <span class=\"why\">" + esc(why) + "</span></li>";
       }).join("") + "</ul>";
@@ -145,6 +150,58 @@
     $("clear").classList.add("on");
     sync();
     window.scrollTo({ top: 0 });
+  }
+
+  // ---- Guide: IV reminder + type matchups -----------------------------------
+  var TYPE_COLORS = {
+    Normal: "#9099A1", Fire: "#FF9C54", Water: "#4D90D5", Electric: "#E5C531",
+    Grass: "#63BC5A", Ice: "#74CEC0", Fighting: "#CE4069", Poison: "#AB6AC8",
+    Ground: "#D97746", Flying: "#8FA8DD", Psychic: "#F97176", Bug: "#90C12C",
+    Rock: "#C7B78B", Ghost: "#5269AC", Dragon: "#0B6DC3", Dark: "#5A5366",
+    Steel: "#5A8EA1", Fairy: "#D590D5"
+  };
+
+  function renderGuide() {
+    var iv = Object.keys(L.IV_TIPS).map(function (k) {
+      return "<dt>" + esc(k) + "</dt><dd>" + esc(L.IV_TIPS[k]) + "</dd>";
+    }).join("");
+    var grid = L.TYPES.map(function (t) {
+      return '<button class="tbtn" data-type="' + t + '" aria-pressed="false" style="background:'
+        + TYPE_COLORS[t] + '">' + esc(t) + "</button>";
+    }).join("");
+    $("guide").innerHTML =
+      "<h3>IV reminder</h3><dl class=\"iv\">" + iv + "</dl>"
+      + '<h3 class="sp">Type matchups</h3>'
+      + '<div class="typegrid">' + grid + "</div>"
+      + '<div class="matchup" id="matchup">Tap a type to see what it beats — and what beats it.</div>';
+    $("guide").querySelector(".typegrid").onclick = function (e) {
+      var b = e.target.closest(".tbtn"); if (!b) return;
+      $("guide").querySelectorAll(".tbtn").forEach(function (x) {
+        x.setAttribute("aria-pressed", x === b);
+      });
+      showMatchup(b.dataset.type);
+    };
+  }
+
+  function pills(list) {
+    return list.map(function (t) {
+      return '<span class="tpill" style="background:' + TYPE_COLORS[t] + '">' + esc(t) + "</span>";
+    }).join("");
+  }
+
+  function matchRow_(lab, list) {
+    return list.length ? '<div class="row"><span class="lab">' + esc(lab) + "</span>" + pills(list) + "</div>" : "";
+  }
+
+  function showMatchup(type) {
+    var off = L.typeOffense(type), def = L.typeDefense(type);
+    $("matchup").innerHTML =
+      matchRow_(type + " attacks — super effective vs", off.strong)
+      + matchRow_("not very effective vs", off.weak)
+      + matchRow_("no damage to", off.none)
+      + matchRow_("As a " + type + " type — weak to", def.weakTo)
+      + matchRow_("resists", def.resists)
+      + matchRow_("immune to", def.immune);
   }
 
   // ---- search + list --------------------------------------------------------
@@ -188,6 +245,12 @@
     if (state.live) rows = rows.filter(function (r) { return L.isLive(r, now); });
     if (state.q) rows = rows.filter(function (r) { return L.matchRow(r, state.q); });
 
+    // Alphabetical within tier (core, then flex, then deep) — Overall rank is only one
+    // of four roles and can mislead, so it doesn't drive the order.
+    rows = rows.slice().sort(function (a, b) {
+      return (TIER_ORDER[a.tier] - TIER_ORDER[b.tier]) || a.target.localeCompare(b.target);
+    });
+
     $("count").textContent = rows.length + (rows.length === 1 ? " target" : " targets")
       + " · " + lg.label;
 
@@ -222,9 +285,10 @@
         + '<div class="top"><span class="name">' + hl(r.target) + "</span>"
         + '<span class="verdict">' + VERDICT[r.tier] + "</span></div>"
         + '<div class="chain">' + chain + (via ? '<span class="arrow">›</span>' + hl(via) : "") + "</div>"
-        + '<div class="tagrow">' + tags.join("") + "</div>"
-        + '<div class="ranks">' + cell("Overall", r.overall) + cell("Lead", r.lead)
+        + '<div class="note">' + esc(L.actionNote(r, state.league)) + "</div>"
+        + '<div class="ranks show">' + cell("Overall", r.overall) + cell("Lead", r.lead)
         + cell("Switch", r.switch) + cell("Closer", r.closer) + "</div>"
+        + '<div class="tagrow">' + tags.join("") + "</div>"
         + '<div class="detail" hidden>' + esc(detail(r)) + "</div></div>";
     }).join("");
 
@@ -275,6 +339,11 @@
     $("clear").onclick = function () {
       $("q").value = ""; state.q = "";
       $("clear").classList.remove("on"); $("q").focus(); sync();
+    };
+    $("guideBtn").onclick = function () {
+      var g = $("guide"), open = g.hasAttribute("hidden");
+      if (open) g.removeAttribute("hidden"); else g.setAttribute("hidden", "");
+      this.setAttribute("aria-expanded", open);
     };
     $("list").addEventListener("click", function (e) { activate(e.target.closest(".card")); });
     $("list").addEventListener("keydown", function (e) {

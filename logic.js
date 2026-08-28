@@ -130,10 +130,47 @@
     });
 
     var top = entries.slice(0, 6);
+    var live = {};
+    top.forEach(function (e) { live[e.target] = 1; });
     return {
       endingSoon: top.filter(function (e) { return e.ending; }),
-      worth: top.filter(function (e) { return !e.ending; })
+      worth: top.filter(function (e) { return !e.ending; }),
+      evergreen: evergreenPicks(leagues, live)
     };
+  }
+
+  // The "always worth catching" reminders: top wild cores you can grab any day,
+  // not tied to today's events. Excludes anything already in the live groups.
+  function evergreenPicks(leagues, live) {
+    var by = {};
+    Object.keys(leagues).forEach(function (key) {
+      (leagues[key].rows || []).forEach(function (row) {
+        if (row.tier !== "core" || row.section !== "wild") return;
+        if (live && live[row.target]) return;
+        var t = by[row.target] || (by[row.target] = {
+          target: row.target, leagues: [], bestOverall: 9999,
+          anchor: { code: LEAGUE_CODE[key] || key, bestRole: row.bestRole }
+        });
+        t.leagues.push({ code: LEAGUE_CODE[key] || key, tier: "core" });
+        if (row.overall && row.overall < t.bestOverall) {
+          t.bestOverall = row.overall;
+          t.anchor = { code: LEAGUE_CODE[key] || key, bestRole: row.bestRole };
+        }
+      });
+    });
+    return Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) {
+      return b.leagues.length - a.leagues.length || a.bestOverall - b.bestOverall;
+    }).slice(0, 5);
+  }
+
+  // Evergreen entries have no window, so their line is just the standing.
+  function evergreenLine(entry) {
+    var codes = entry.leagues.map(function (l) { return l.code; });
+    var role = (entry.anchor && entry.anchor.bestRole) || "";
+    var m = role.match(/^(\w+)\s+#(\d+)$/);
+    if (m) role = "#" + m[2] + " " + m[1];
+    return entry.target + " — " + codes.join(" & ") + " core"
+      + (role ? ", " + role : "") + ". Always worth a catch.";
   }
 
   // One line of reasoning, built from the data. e.g.
@@ -227,6 +264,69 @@
     return "Not in PvPoke’s PvP rankings — don’t bother for battles.";
   }
 
+  // ---- per-card action note: what to actually do with the catch --------------
+  function actionNote(row, league) {
+    if (row.avail === "Shadow only")
+      return "Store candy — you’ll want the Shadow from a Rocket battle, not this wild one.";
+    if (league === "master")
+      return "Catch — chase a hundo (15/15/15) and bank XL candy; there’s no CP cap here.";
+    var xl = row.xl ? " Needs XL candy to reach the cap." : "";
+    if (row.tier === "niche")
+      return "Catch situationally — only strong in its one role (see ranks)." + xl;
+    return "Catch — appraise it: for Great/Ultra you want high Defense & HP, low Attack (not a hundo)." + xl;
+  }
+
+  // ---- type matchups (Pokémon GO uses the standard chart) --------------------
+  var TYPES = ["Normal", "Fire", "Water", "Electric", "Grass", "Ice", "Fighting",
+    "Poison", "Ground", "Flying", "Psychic", "Bug", "Rock", "Ghost", "Dragon",
+    "Dark", "Steel", "Fairy"];
+
+  // For each attacking type: what it hits for double, half, and no damage.
+  var ATTACK = {
+    Normal: { x2: [], half: ["Rock", "Steel"], x0: ["Ghost"] },
+    Fire: { x2: ["Grass", "Ice", "Bug", "Steel"], half: ["Fire", "Water", "Rock", "Dragon"], x0: [] },
+    Water: { x2: ["Fire", "Ground", "Rock"], half: ["Water", "Grass", "Dragon"], x0: [] },
+    Electric: { x2: ["Water", "Flying"], half: ["Electric", "Grass", "Dragon"], x0: ["Ground"] },
+    Grass: { x2: ["Water", "Ground", "Rock"], half: ["Fire", "Grass", "Poison", "Flying", "Bug", "Dragon", "Steel"], x0: [] },
+    Ice: { x2: ["Grass", "Ground", "Flying", "Dragon"], half: ["Fire", "Water", "Ice", "Steel"], x0: [] },
+    Fighting: { x2: ["Normal", "Ice", "Rock", "Dark", "Steel"], half: ["Poison", "Flying", "Psychic", "Bug", "Fairy"], x0: ["Ghost"] },
+    Poison: { x2: ["Grass", "Fairy"], half: ["Poison", "Ground", "Rock", "Ghost"], x0: ["Steel"] },
+    Ground: { x2: ["Fire", "Electric", "Poison", "Rock", "Steel"], half: ["Grass", "Bug"], x0: ["Flying"] },
+    Flying: { x2: ["Grass", "Fighting", "Bug"], half: ["Electric", "Rock", "Steel"], x0: [] },
+    Psychic: { x2: ["Fighting", "Poison"], half: ["Psychic", "Steel"], x0: ["Dark"] },
+    Bug: { x2: ["Grass", "Psychic", "Dark"], half: ["Fire", "Fighting", "Poison", "Flying", "Ghost", "Steel", "Fairy"], x0: [] },
+    Rock: { x2: ["Fire", "Ice", "Flying", "Bug"], half: ["Fighting", "Ground", "Steel"], x0: [] },
+    Ghost: { x2: ["Psychic", "Ghost"], half: ["Dark"], x0: ["Normal"] },
+    Dragon: { x2: ["Dragon"], half: ["Steel"], x0: ["Fairy"] },
+    Dark: { x2: ["Psychic", "Ghost"], half: ["Fighting", "Dark", "Fairy"], x0: [] },
+    Steel: { x2: ["Ice", "Rock", "Fairy"], half: ["Fire", "Water", "Electric", "Steel"], x0: [] },
+    Fairy: { x2: ["Fighting", "Dragon", "Dark"], half: ["Fire", "Poison", "Steel"], x0: [] }
+  };
+
+  // Offense: what a mon OF this type hits hard / poorly.
+  function typeOffense(type) {
+    var a = ATTACK[type] || { x2: [], half: [], x0: [] };
+    return { strong: a.x2.slice(), weak: a.half.slice(), none: a.x0.slice() };
+  }
+
+  // Defense: which attacking types hit a mon OF this type hard / poorly, by inverting.
+  function typeDefense(type) {
+    var weakTo = [], resists = [], immune = [];
+    TYPES.forEach(function (atk) {
+      var a = ATTACK[atk];
+      if (a.x0.indexOf(type) >= 0) immune.push(atk);
+      else if (a.x2.indexOf(type) >= 0) weakTo.push(atk);
+      else if (a.half.indexOf(type) >= 0) resists.push(atk);
+    });
+    return { weakTo: weakTo, resists: resists, immune: immune };
+  }
+
+  var IV_TIPS = {
+    "Great & Ultra": "Perfect PvP IVs are usually LOW Attack with high Defense & HP — not 15/15/15. Appraise before you transfer a good-looking catch.",
+    "Master": "No CP cap, so raw stats win: look for a hundo (15/15/15) or near-perfect, and save XL Candy to power it to level 50.",
+    "Shadow": "Shadows hit harder but are frailer. Great for some picks; the wild Shadow-only catches here are mainly candy until you battle Rocket."
+  };
+
   function errorMessage(reason) {
     return "The data file didn’t load" + (reason ? " (" + reason + ")" : "")
       + ". Check your connection and reload — it may be updating right now.";
@@ -238,9 +338,11 @@
     fmtDate: fmtDate, fmtDateTime: fmtDateTime,
     dataDate: dataDate, dataAgeDays: dataAgeDays,
     stalenessNotice: stalenessNotice, availabilityNote: availabilityNote,
-    computeFocus: computeFocus, focusLine: focusLine, errorMessage: errorMessage,
+    computeFocus: computeFocus, focusLine: focusLine, evergreenLine: evergreenLine,
+    errorMessage: errorMessage, actionNote: actionNote,
     standingIn: standingIn, bestLeagueFor: bestLeagueFor,
-    searchFamilies: searchFamilies, skipReason: skipReason
+    searchFamilies: searchFamilies, skipReason: skipReason,
+    TYPES: TYPES, typeOffense: typeOffense, typeDefense: typeDefense, IV_TIPS: IV_TIPS
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = api;
