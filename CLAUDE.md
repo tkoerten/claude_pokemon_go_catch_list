@@ -16,6 +16,13 @@ time. These rules are settled — follow them, don't re-litigate them.
 - `aliases` include **every evolution stage** from the gamemaster, so an unranked
   middle form (Prinplup, Corvisquire) is searchable. **Never trim aliases to ranked
   forms only.**
+- The default list shows only the good targets (core/flex/niche). `data.json` also
+  carries a **`families` index** of every catch family — ranked or not — so a search
+  resolves anything and the weak ones get a **"don't catch"** answer. It is
+  **search-only** (never shown by default) and **cross-league aware**: a family that's
+  weak here but strong elsewhere reads "Catch elsewhere — core in Master". The verdict
+  is honest — a real PvPoke rank where one exists ("Switch #230 at best"), or "not in
+  PvPoke's rankings" where the line is unranked. **Never invent a rank to fill the gap.**
 
 ## Availability (`now`)
 - Availability always needs a **source and, where published, dates**. Three feeds,

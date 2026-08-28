@@ -21,6 +21,11 @@ For **Great**, **Ultra**, and **Master** league:
 - **Focus today** at the top: at most six things worth your time right now, derived from
   the data — split into *Ending soon* (a window closing within 48 hours) and
   *Worth your time*.
+- **Search anything.** The default list is only the good targets, but you can search
+  *any* Pokémon at any evolution stage. A weak one gets an honest **"don't catch"** with
+  the reason — a real low PvPoke rank ("Switch #230 at best") or "not in PvPoke's
+  rankings" — and if it's only worth it in another league, the card says so and jumps you
+  there ("Catch elsewhere — core in Master").
 - **Live now**: what's obtainable today from raids, eggs, and event spawns, with end
   dates where they're published.
 - **Lure** hints (by type) and lure-evolution notes, XL and Shadow-only flags.

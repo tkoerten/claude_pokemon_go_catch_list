@@ -191,7 +191,7 @@
     $("count").textContent = rows.length + (rows.length === 1 ? " target" : " targets")
       + " · " + lg.label;
 
-    $("list").innerHTML = rows.length ? rows.map(function (r) {
+    var curatedHtml = rows.map(function (r) {
       var shown = [r.target].concat(r.becomes).map(function (x) { return x.toLowerCase(); });
       var via = state.q ? (r.aliases || []).find(function (a) {
         return a.toLowerCase().indexOf(state.q) >= 0
@@ -226,9 +226,45 @@
         + '<div class="ranks">' + cell("Overall", r.overall) + cell("Lead", r.lead)
         + cell("Switch", r.switch) + cell("Closer", r.closer) + "</div>"
         + '<div class="detail" hidden>' + esc(detail(r)) + "</div></div>";
-    }).join("") : '<div class="empty"><b>Nothing matches</b>'
-      + "Try the wild form or what it evolves into — both work. "
-      + 'If <b style="display:inline">Live now</b> is on, turn it off to see everything.</div>';
+    }).join("");
+
+    // Search-only: families that match but aren't a catch in this league — the
+    // "don't catch" answer, and a nudge to the league where it does matter.
+    var mutedHtml = "";
+    if (state.q) {
+      var shown = new Set(rows.map(function (r) { return r.target; }));
+      var skips = L.searchFamilies(DATA, state.q, state.league, shown, 12);
+      if (skips.length) mutedHtml = '<div class="subhead">Not worth catching here</div>'
+        + skips.map(skipCard).join("");
+    }
+
+    if (curatedHtml || mutedHtml) {
+      $("list").innerHTML = curatedHtml + mutedHtml;
+    } else {
+      $("list").innerHTML = '<div class="empty"><b>Nothing matches</b>'
+        + "Try the wild form or what it evolves into — both work. "
+        + 'If <b style="display:inline">Live now</b> is on, turn it off to see everything.</div>';
+    }
+  }
+
+  var LEAGUE_NAMES = { great: "Great", ultra: "Ultra", master: "Master" };
+
+  function skipCard(e) {
+    var shown = [e.target].concat(e.becomes).map(function (x) { return x.toLowerCase(); });
+    var via = state.q ? (e.aliases || []).find(function (a) {
+      return a.toLowerCase().indexOf(state.q) >= 0
+        && !shown.some(function (v) { return v.indexOf(state.q) >= 0; });
+    }) : null;
+    var chain = "<b>" + hl(e.target) + "</b>"
+      + (e.becomes.length ? '<span class="arrow">›</span>' + e.becomes.map(hl).join(", ") : "");
+    var jump = e.better ? ' data-jump="' + e.better.league + '"' : "";
+    var verdict = e.better ? "Catch elsewhere" : "Don’t catch";
+    return '<div class="card" data-tier="skip"' + jump
+      + ' tabindex="0" role="button">'
+      + '<div class="top"><span class="name">' + hl(e.target) + "</span>"
+      + '<span class="verdict">' + verdict + "</span></div>"
+      + '<div class="chain">' + chain + (via ? '<span class="arrow">›</span>' + hl(via) : "") + "</div>"
+      + '<div class="skipwhy">' + esc(L.skipReason(e, LEAGUE_NAMES)) + "</div></div>";
   }
 
   function wireEvents() {
@@ -240,16 +276,18 @@
       $("q").value = ""; state.q = "";
       $("clear").classList.remove("on"); $("q").focus(); sync();
     };
-    $("list").addEventListener("click", function (e) { toggle(e.target.closest(".card")); });
+    $("list").addEventListener("click", function (e) { activate(e.target.closest(".card")); });
     $("list").addEventListener("keydown", function (e) {
       if (e.key === "Enter" || e.key === " ") {
         var c = e.target.closest(".card");
-        if (c) { e.preventDefault(); toggle(c); }
+        if (c) { e.preventDefault(); activate(c); }
       }
     });
     $("foot").innerHTML = "<b>Core</b> means top 25 in at least one role. <b>Flex</b> means top 75 in two or"
       + " more. <b>Deep</b> is a single-role specialist. Ranks are the best any form in that family reaches,"
       + " Shadow included, since they share a candy pool.<br><br>"
+      + "Search any Pokémon, even a bad one: the good ones show by default, and searching a"
+      + " weak line tells you to skip it (or points you to the league where it's worth catching).<br><br>"
       + "<b>Live now</b> shows what is obtainable today: event spawns, raid rotations, and egg pools."
       + " It does not cover the ordinary background spawns in your area — nobody publishes those.<br><br>"
       + "Lure tags come from typing: a lure boosts those types out of your local pool, so it"
@@ -257,6 +295,12 @@
       + " lure name lists everything it helps with.<br><br>"
       + "Built from PvPoke rankings, data dated " + esc(DATA.gamemaster.slice(0, 10))
       + ". Generated " + esc(DATA.generated) + ".";
+  }
+
+  function activate(c) {
+    if (!c) return;
+    if (c.dataset.jump) { jumpTo(c.dataset.jump, c.querySelector(".name").textContent); return; }
+    toggle(c);
   }
 
   function toggle(c) {

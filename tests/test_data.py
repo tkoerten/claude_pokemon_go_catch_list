@@ -93,5 +93,43 @@ class SearchResolves(unittest.TestCase):
             self.assertIn(stage, low)
 
 
+class FamilyIndex(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.d = load()
+        cls.by = {f["target"]: f for f in cls.d["families"]}
+
+    def test_index_present_and_covers_curated(self):
+        self.assertGreater(len(self.d["families"]), 300)
+        # Every curated row must also appear in the family index.
+        targets = {f["target"] for f in self.d["families"]}
+        for lg in self.d["leagues"].values():
+            for r in lg["rows"]:
+                self.assertIn(r["target"], targets)
+
+    def test_weak_family_is_ranked_but_low(self):
+        # Weedle's line is ranked (via Beedrill) but nowhere near the top 75.
+        f = self.by["Weedle"]
+        self.assertIn("weedle", [a.lower() for a in f["aliases"]])
+        self.assertTrue(f["best"], "Weedle should carry at least one league rank")
+        self.assertTrue(all(v[1] == "skip" for v in f["best"].values()))
+
+    def test_unranked_family_has_empty_best(self):
+        # Base Rattata isn't in PvPoke's rankings at all.
+        self.assertEqual(self.by["Rattata"]["best"], {})
+
+    def test_cross_league_family(self):
+        # Dialga is skip in Great/Ultra but core in Master.
+        best = self.by["Dialga"]["best"]
+        self.assertEqual(best["master"][1], "core")
+        self.assertEqual(best["great"][1], "skip")
+
+    def test_curated_family_tier_matches_row(self):
+        # Piplup is core in Great in both the index and the curated rows.
+        self.assertEqual(self.by["Piplup"]["best"]["great"][1], "core")
+        row = next(r for r in self.d["leagues"]["great"]["rows"] if r["target"] == "Piplup")
+        self.assertEqual(row["tier"], "core")
+
+
 if __name__ == "__main__":
     unittest.main()

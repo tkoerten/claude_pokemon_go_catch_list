@@ -173,6 +173,60 @@
     return via + body + ".";
   }
 
+  // ---- "don't catch" search over the full family index ---------------------
+  var CURATED = { core: 1, flex: 1, niche: 1 };   // tiers that are already a list row
+
+  function standingIn(fam, league) {
+    var b = fam.best && fam.best[league];
+    if (!b) return { tier: "unranked" };
+    return { tier: b[1], rank: b[0], role: b[2] };
+  }
+
+  // The league where this family is actually worth catching (best curated tier).
+  function bestLeagueFor(fam) {
+    var best = null;
+    Object.keys(fam.best || {}).forEach(function (k) {
+      var v = fam.best[k];
+      if (!CURATED[v[1]]) return;
+      if (!best || v[0] < best.rank) best = { league: k, rank: v[0], tier: v[1], role: v[2] };
+    });
+    return best;
+  }
+
+  // Families that match the query but are NOT a catch in the current league:
+  // low-ranked ("skip"), unranked, or only good in another league. Search-only.
+  function searchFamilies(data, q, league, shown, limit) {
+    if (!q) return [];
+    limit = limit || 12;
+    var out = [];
+    (data.families || []).forEach(function (f) {
+      if (!matchRow(f, q)) return;
+      if (shown && shown.has(f.target)) return;
+      var here = standingIn(f, league);
+      if (CURATED[here.tier]) return;               // already shown as a normal row
+      out.push({ target: f.target, becomes: f.becomes || [], aliases: f.aliases || [],
+                 here: here, better: bestLeagueFor(f) });
+    });
+    out.sort(function (a, b) {
+      var ai = a.better ? 0 : (a.here.tier === "skip" ? 1 : 2);
+      var bi = b.better ? 0 : (b.here.tier === "skip" ? 1 : 2);
+      if (ai !== bi) return ai - bi;
+      var ar = a.better ? a.better.rank : (a.here.rank || 1e9);
+      var br = b.better ? b.better.rank : (b.here.rank || 1e9);
+      return ar - br;
+    });
+    return out.slice(0, limit);
+  }
+
+  function skipReason(entry, names) {
+    var b = entry.better;
+    if (b) return "Better in " + (names[b.league] || b.league)
+      + " — " + b.tier + " there (#" + b.rank + "). Skip it for this league.";
+    if (entry.here.tier === "skip")
+      return "Not PvP-relevant — PvPoke ranks it " + entry.here.role + " at best.";
+    return "Not in PvPoke’s PvP rankings — don’t bother for battles.";
+  }
+
   function errorMessage(reason) {
     return "The data file didn’t load" + (reason ? " (" + reason + ")" : "")
       + ". Check your connection and reload — it may be updating right now.";
@@ -184,7 +238,9 @@
     fmtDate: fmtDate, fmtDateTime: fmtDateTime,
     dataDate: dataDate, dataAgeDays: dataAgeDays,
     stalenessNotice: stalenessNotice, availabilityNote: availabilityNote,
-    computeFocus: computeFocus, focusLine: focusLine, errorMessage: errorMessage
+    computeFocus: computeFocus, focusLine: focusLine, errorMessage: errorMessage,
+    standingIn: standingIn, bestLeagueFor: bestLeagueFor,
+    searchFamilies: searchFamilies, skipReason: skipReason
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = api;

@@ -180,12 +180,79 @@ def build_league(gm, rankings, cp_cap):
     return rows
 
 
+def build_index(gm, data):
+    """A lean, searchable table of EVERY catch family, ranked or not.
+
+    The curated per-league rows only include families that reach the top 75. This
+    covers the rest — so a search for an unviable line (Weedle, Rattata) still
+    resolves and can be marked "don't catch", with the honest reason: a real but low
+    PvPoke rank where one exists, or "not in PvPoke's rankings" where it doesn't.
+
+    One entry per base family:
+      {"target", "becomes", "aliases",
+       "best": {league: [bestRank, tier, bestRole]}}   # leagues where ranked at all
+    tier is core/flex/niche (same thresholds as the curated rows) or "skip" for a
+    family that is ranked but outside the top 75. A league missing from "best" means
+    the family is unranked there; an empty "best" means unranked everywhere.
+    """
+    byid, base = family_index(gm)
+    memo = {}
+
+    def base_of(s):
+        if s not in memo:
+            memo[s] = strip_shadow(base(s))
+        return memo[s]
+
+    # One pass per league/category: base family -> best (lowest) rank in that category.
+    league_fam = {}
+    for key, _, _ in LEAGUES:
+        fam_rank = {c: {} for c in CATS}
+        for c in CATS:
+            d = fam_rank[c]
+            for i, e in enumerate(data[key][c]):
+                b = base_of(e["speciesId"])
+                r = i + 1
+                if b not in d or r < d[b]:
+                    d[b] = r
+        league_fam[key] = fam_rank
+
+    families = sorted({base_of(p["speciesId"]) for p in gm["pokemon"]})
+    out = []
+    for b in families:
+        bp = byid.get(b)
+        if not bp or not bp.get("speciesName"):
+            continue
+        target = bp["speciesName"]
+        aliases = family_names(byid, b)
+        best = {}
+        for key, _, _ in LEAGUES:
+            fr = league_fam[key]
+            per_cat = {c: fr[c].get(b) for c in CATS}
+            ranked = [per_cat[c] for c in CATS if per_cat[c]]
+            if not ranked:
+                continue
+            top25 = any(r and r <= CORE_N for r in per_cat.values())
+            n75 = sum(1 for r in per_cat.values() if r and r <= TOP_N)
+            tier = "core" if top25 else ("flex" if n75 >= 2 else ("niche" if n75 == 1 else "skip"))
+            roles = [(per_cat["leads"], "Lead"), (per_cat["switches"], "Switch"),
+                     (per_cat["closers"], "Closer")]
+            roles = [(r, n) for r, n in roles if r]
+            role = (f"{min(roles)[1]} #{min(roles)[0]}" if roles
+                    else f"Overall #{per_cat['overall']}")
+            best[key] = [min(ranked), tier, role]
+        out.append({"target": target,
+                    "becomes": [a for a in aliases if a != target],
+                    "aliases": aliases, "best": best})
+    return out
+
+
 def build_all():
     gm, data = load()
     out = {"generated": datetime.date.today().isoformat(),
            "gamemaster": gm.get("timestamp", "unknown"), "leagues": {}}
     for key, label, cp in LEAGUES:
         out["leagues"][key] = {"label": label, "cpCap": cp, "rows": build_league(gm, data[key], cp)}
+    out["families"] = build_index(gm, data)
     return out
 
 

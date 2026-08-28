@@ -134,3 +134,53 @@ test("availabilityNote: speaks only when a feed failed", () => {
   assert.equal(L.availabilityNote({ availability: { ok: true } }), null);
   assert.match(L.availabilityNote({ availability: { ok: false, failed: ["events"] } }), /Live now/);
 });
+
+// ---- search over the full family index (the "don't catch" answer) ---------
+const FAMILIES = {
+  families: [
+    { target: "Weedle", becomes: ["Beedrill"], aliases: ["Weedle", "Kakuna", "Beedrill"],
+      best: { great: [230, "skip", "Switch #230"] } },
+    { target: "Rattata", becomes: ["Raticate"], aliases: ["Rattata", "Raticate"], best: {} },
+    { target: "Dialga", becomes: [], aliases: ["Dialga"],
+      best: { great: [655, "skip", "Switch #655"], master: [25, "core", "Closer #25"] } },
+    { target: "Piplup", becomes: ["Empoleon"], aliases: ["Piplup", "Prinplup", "Empoleon"],
+      best: { great: [4, "core", "Closer #9"] } }
+  ]
+};
+const NAMES = { great: "Great", ultra: "Ultra", master: "Master" };
+
+test("searchFamilies: empty query returns nothing", () => {
+  assert.equal(L.searchFamilies(FAMILIES, "", "great", new Set()).length, 0);
+});
+
+test("searchFamilies: a weak line resolves from any stage and is skip", () => {
+  const r = L.searchFamilies(FAMILIES, "kakuna", "great", new Set());
+  assert.equal(r.length, 1);
+  assert.equal(r[0].target, "Weedle");
+  assert.equal(r[0].here.tier, "skip");
+  assert.match(L.skipReason(r[0], NAMES), /Switch #230/);
+});
+
+test("searchFamilies: unranked family says so", () => {
+  const r = L.searchFamilies(FAMILIES, "rattata", "great", new Set());
+  assert.equal(r[0].here.tier, "unranked");
+  assert.match(L.skipReason(r[0], NAMES), /Not in PvPoke/);
+});
+
+test("searchFamilies: cross-league nudge points to the right league", () => {
+  const r = L.searchFamilies(FAMILIES, "dialga", "great", new Set());
+  assert.ok(r[0].better);
+  assert.equal(r[0].better.league, "master");
+  assert.match(L.skipReason(r[0], NAMES), /Better in Master/);
+});
+
+test("searchFamilies: a family curated in this league is NOT a skip card", () => {
+  const r = L.searchFamilies(FAMILIES, "piplup", "great", new Set(["Piplup"]));
+  assert.equal(r.length, 0);
+});
+
+test("searchFamilies: better-in-another-league sorts ahead of dead skips", () => {
+  const r = L.searchFamilies(FAMILIES, "a", "great", new Set());  // matches several
+  // Dialga (has a better league) should come before pure skips/unranked.
+  assert.equal(r[0].target, "Dialga");
+});
