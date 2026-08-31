@@ -1,28 +1,20 @@
 [
   {
-    "label": "2026 Pokémon World Championships",
-    "start": "2026-08-28T10:00:00",
-    "end": "2026-08-30T20:00:00",
+    "label": "Mega Ascension",
+    "start": "2026-08-31T10:00:00.000",
+    "end": "2026-09-04T23:59:00.000",
     "pokemon": [
-      "Alolan Sandshrew",
-      "Mankey",
-      "Lickitung",
-      "Totodile",
-      "Wooper",
-      "Foongus",
+      "Pikachu",
+      "Bellsprout",
+      "Staryu",
+      "Dratini",
+      "Skarmory",
+      "Chespin",
+      "Fennekin",
       "Froakie",
-      "Litten"
+      "Inkay",
+      "Falinks"
     ],
-    "event": "pokemon-xp-2026-worlds"
-  },
-  {
-    "label": "2026 Pokémon World Championships (rare)",
-    "start": "2026-08-28T10:00:00",
-    "end": "2026-08-30T20:00:00",
-    "pokemon": [
-      "Togetic",
-      "Beldum"
-    ],
-    "event": "pokemon-xp-2026-worlds"
+    "event": "mega-ascension"
   }
 ]
