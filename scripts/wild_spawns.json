@@ -1,20 +1,154 @@
 [
   {
-    "label": "Mega Ascension",
-    "start": "2026-08-31T10:00:00.000",
-    "end": "2026-09-04T23:59:00.000",
+    "label": "Verdant Overgrowth",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
     "pokemon": [
-      "Pikachu",
+      "Weedle",
       "Bellsprout",
+      "Scyther",
+      "Pinsir",
+      "Roselia",
+      "Snover",
+      "Venipede",
+      "Chespin",
+      "Fennekin",
+      "Froakie",
+      "Skiddo"
+    ],
+    "event": "pokemon-go-fest-2026-mega-finale"
+  },
+  {
+    "label": "Mindworks Canal",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
+    "pokemon": [
+      "Abra",
+      "Slowpoke",
       "Staryu",
-      "Dratini",
-      "Skarmory",
+      "Ralts",
+      "Meditite",
+      "Chespin",
+      "Fennekin",
+      "Froakie",
+      "Espurr",
+      "Binacle",
+      "Clauncher"
+    ],
+    "event": "pokemon-go-fest-2026-mega-finale"
+  },
+  {
+    "label": "Eerie Alley",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
+    "pokemon": [
+      "Gastly",
+      "Houndour",
+      "Shuppet",
+      "Zorua",
+      "Litwick",
       "Chespin",
       "Fennekin",
       "Froakie",
       "Inkay",
+      "Phantump",
+      "Pumpkaboo (Medium)"
+    ],
+    "event": "pokemon-go-fest-2026-mega-finale"
+  },
+  {
+    "label": "Circuit Plaza",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
+    "pokemon": [
+      "Pikachu",
+      "Mareep",
+      "Electrike",
+      "Emolga",
+      "Tynamo",
+      "Stunfisk",
+      "Chespin",
+      "Fennekin",
+      "Froakie",
+      "Helioptile",
+      "Dedenne"
+    ],
+    "event": "pokemon-go-fest-2026-mega-finale"
+  },
+  {
+    "label": "Iron Frostworks",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
+    "pokemon": [
+      "Onix",
+      "Skarmory",
+      "Aron",
+      "Snorunt",
+      "Beldum",
+      "Drilbur",
+      "Chespin",
+      "Fennekin",
+      "Froakie",
+      "Amaura",
+      "Bergmite"
+    ],
+    "event": "pokemon-go-fest-2026-mega-finale"
+  },
+  {
+    "label": "Battle District",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
+    "pokemon": [
+      "Machop",
+      "Carvanha",
+      "Numel",
+      "Buneary",
+      "Sandile",
+      "Scraggy",
+      "Chespin",
+      "Fennekin",
+      "Froakie",
+      "Pancham",
       "Falinks"
     ],
-    "event": "mega-ascension"
+    "event": "pokemon-go-fest-2026-mega-finale"
+  },
+  {
+    "label": "Skyline Roosts",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
+    "pokemon": [
+      "Magikarp",
+      "Aerodactyl",
+      "Dratini",
+      "Swablu",
+      "Bagon",
+      "Chespin",
+      "Fennekin",
+      "Froakie",
+      "Fletchling",
+      "Tyrunt",
+      "Noibat"
+    ],
+    "event": "pokemon-go-fest-2026-mega-finale"
+  },
+  {
+    "label": "Prism Promenade",
+    "start": "2026-09-05T10:00:00.000",
+    "end": "2026-09-06T18:00:00.000",
+    "pokemon": [
+      "Pikachu",
+      "Clefairy",
+      "Sableye",
+      "Mawile",
+      "Audino",
+      "Chespin",
+      "Fennekin",
+      "Froakie",
+      "Furfrou (Natural)",
+      "Spritzee",
+      "Carbink"
+    ],
+    "event": "pokemon-go-fest-2026-mega-finale"
   }
 ]
