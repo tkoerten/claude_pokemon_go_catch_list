@@ -1,21 +1,34 @@
 [
   {
-    "label": "Mega Squads",
-    "start": "2026-09-08T10:00:00.000",
-    "end": "2026-09-14T20:00:00.000",
+    "label": "From 5:00 a.m. to 5:00 p.m.",
+    "start": "2026-09-16T10:00:00.000",
+    "end": "2026-09-22T20:00:00.000",
     "pokemon": [
-      "Weedle",
-      "Flamigo",
-      "Pidgey",
-      "Emolga",
-      "Fletchling",
-      "Noibat",
-      "Rookidee",
-      "Houndour",
-      "Carvanha",
-      "Purrloin",
-      "Nickit"
+      "Charmander wearing Friede's goggles",
+      "Sprigatito",
+      "Fuecoco",
+      "Quaxly",
+      "Fidough",
+      "Wattrel",
+      "Captain's Cap Pikachu",
+      "Chansey"
     ],
-    "event": "mega-squads"
+    "event": "pokemon-horizons-the-series-celebration-event-2026"
+  },
+  {
+    "label": "From 5:00 p.m. to 5:00 a.m.",
+    "start": "2026-09-16T10:00:00.000",
+    "end": "2026-09-22T20:00:00.000",
+    "pokemon": [
+      "Charmander wearing Friede's goggles",
+      "Rhyhorn",
+      "Eevee",
+      "Hatenna",
+      "Nacli",
+      "Tinkatink",
+      "Captain's Cap Pikachu",
+      "Rockruff"
+    ],
+    "event": "pokemon-horizons-the-series-celebration-event-2026"
   }
 ]
