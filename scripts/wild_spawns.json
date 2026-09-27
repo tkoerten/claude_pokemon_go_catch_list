@@ -1,51 +1,5 @@
 [
   {
-    "label": "Phantump Catch Mastery",
-    "start": "2026-09-26T10:00:00.000",
-    "end": "2026-09-26T20:00:00.000",
-    "pokemon": [
-      "Cherubi",
-      "Drifloon"
-    ],
-    "event": "catch-mastery-phantump-2026"
-  },
-  {
-    "label": "Brisbane, Australia - Pokémon GO City Safari",
-    "start": "2026-09-26T00:00:00.000Z",
-    "end": "2026-09-27T08:00:00.000Z",
-    "pokemon": [
-      "Jigglypuff",
-      "Abra",
-      "Slowpoke",
-      "Totodile",
-      "Mareep",
-      "Marill",
-      "Hoppip",
-      "Unown B",
-      "Unown L",
-      "Unown M",
-      "Unown R",
-      "Stantler",
-      "Miltank",
-      "Wingull",
-      "Baltoy",
-      "Buizel",
-      "Lillipup",
-      "Petilil",
-      "Yamask",
-      "Gothita",
-      "Orange Flower Flabébé",
-      "Binacle",
-      "Clauncher",
-      "Hawlucha",
-      "Mudbray",
-      "Oranguru",
-      "Komala",
-      "Flamigo"
-    ],
-    "event": "pokemon-go-city-safari-brisbane-2026"
-  },
-  {
     "label": "Marseille, France - Pokémon GO City Safari",
     "start": "2026-09-26T08:00:00.000Z",
     "end": "2026-09-27T16:00:00.000Z",
