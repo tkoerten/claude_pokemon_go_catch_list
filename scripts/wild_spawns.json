@@ -1,16 +1,14 @@
 [
   {
-    "label": "Harvest Festival 2026: Applin Picking",
+    "label": "Taken Over Spawns",
     "start": "2026-09-29T10:00:00.000",
     "end": "2026-10-05T20:00:00.000",
     "pokemon": [
-      "Shroomish",
-      "Foongus",
-      "Skwovet",
-      "Lechonk",
-      "Smoliv",
-      "Snorlax",
-      "Applin"
+      "Ekans",
+      "Koffing",
+      "Magmar",
+      "Slugma",
+      "Numel"
     ],
     "event": "harvest-festival-2026"
   }
