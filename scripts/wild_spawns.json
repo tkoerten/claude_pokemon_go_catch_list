@@ -1,5 +1,24 @@
 [
   {
+    "label": "Patterns of the Wild",
+    "start": "2026-10-02T10:00:00.000",
+    "end": "2026-10-02T20:00:00.000",
+    "pokemon": [
+      "Caterpie",
+      "Batik Shirt Pikachu",
+      "Oddish",
+      "Gloom",
+      "Bellsprout",
+      "Ledyba",
+      "Ledian",
+      "Hoppip",
+      "Skiploom",
+      "Sunkern",
+      "Wurmple"
+    ],
+    "event": "patterns-of-the-wild-2026"
+  },
+  {
     "label": "Taken Over Spawns",
     "start": "2026-09-29T10:00:00.000",
     "end": "2026-10-05T20:00:00.000",
@@ -11,5 +30,20 @@
       "Numel"
     ],
     "event": "harvest-festival-2026"
+  },
+  {
+    "label": "Harvest Festival Spawns",
+    "start": "2026-10-02T00:00:00.000",
+    "end": "2026-10-05T20:00:00.000",
+    "pokemon": [
+      "Snorlax",
+      "Shroomish",
+      "Foongus",
+      "Skwovet",
+      "Applin",
+      "Lechonk",
+      "Smoliv"
+    ],
+    "event": "harvest-festival-taken-over-2026"
   }
 ]
