@@ -7,5 +7,41 @@
       "Minior (Meteor Form)"
     ],
     "event": "minior-showers-orionids-2026"
+  },
+  {
+    "label": "Pokémon GO City Safari: Boston (Rescheduled)",
+    "start": "2026-10-24T10:00:00.000",
+    "end": "2026-10-25T18:00:00.000",
+    "pokemon": [
+      "Jigglypuff",
+      "Abra",
+      "Slowpoke",
+      "Totodile",
+      "Mareep",
+      "Marill",
+      "Hoppip",
+      "Unown B",
+      "Unown L",
+      "Unown M",
+      "Unown R",
+      "Stantler",
+      "Miltank",
+      "Wingull",
+      "Baltoy",
+      "Buizel",
+      "Lillipup",
+      "Petilil",
+      "Yamask",
+      "Gothita",
+      "Orange Flower Flabébé",
+      "Binacle",
+      "Clauncher",
+      "Hawlucha",
+      "Mudbray",
+      "Oranguru",
+      "Komala",
+      "Flamigo"
+    ],
+    "event": "pokemon-go-city-safari-boston-2026-rescheduled"
   }
 ]
