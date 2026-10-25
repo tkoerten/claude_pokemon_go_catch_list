@@ -1,14 +1,5 @@
 [
   {
-    "label": "Minior Showers: Orionids 2026",
-    "start": "2026-10-19T17:00:00.000",
-    "end": "2026-10-24T23:59:00.000",
-    "pokemon": [
-      "Minior (Meteor Form)"
-    ],
-    "event": "minior-showers-orionids-2026"
-  },
-  {
     "label": "Pokémon GO City Safari: Boston (Rescheduled)",
     "start": "2026-10-24T10:00:00.000",
     "end": "2026-10-25T18:00:00.000",
