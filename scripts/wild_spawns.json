@@ -1,38 +1,19 @@
 [
   {
-    "label": "Pokémon GO City Safari: Boston (Rescheduled)",
-    "start": "2026-10-24T10:00:00.000",
-    "end": "2026-10-25T18:00:00.000",
+    "label": "Pokémon GO Halloween 2026 Part I",
+    "start": "2026-10-27T10:00:00.000",
+    "end": "2026-11-01T10:00:00.000",
     "pokemon": [
-      "Jigglypuff",
-      "Abra",
-      "Slowpoke",
-      "Totodile",
-      "Mareep",
-      "Marill",
-      "Hoppip",
-      "Unown B",
-      "Unown L",
-      "Unown M",
-      "Unown R",
-      "Stantler",
-      "Miltank",
-      "Wingull",
-      "Baltoy",
-      "Buizel",
-      "Lillipup",
-      "Petilil",
-      "Yamask",
-      "Gothita",
-      "Orange Flower Flabébé",
-      "Binacle",
-      "Clauncher",
-      "Hawlucha",
-      "Mudbray",
-      "Oranguru",
-      "Komala",
-      "Flamigo"
+      "Zubat wearing a top hat",
+      "Piplup wearing a Halloween Mischief costume",
+      "Noibat wearing a headband",
+      "Pumpkaboo",
+      "Duskull",
+      "Misdreavus",
+      "Drifblim wearing a Halloween Mischief costume",
+      "Vulpix wearing a Spooky Festival costume",
+      "Gengar wearing a Tricks & Treats costume"
     ],
-    "event": "pokemon-go-city-safari-boston-2026-rescheduled"
+    "event": "halloween-2026-part-1"
   }
 ]
