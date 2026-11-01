@@ -1,19 +1,17 @@
 [
   {
-    "label": "Pokémon GO Halloween 2026 Part I",
-    "start": "2026-10-27T10:00:00.000",
-    "end": "2026-11-01T10:00:00.000",
+    "label": "Pokémon GO Halloween 2026 Part II",
+    "start": "2026-11-01T10:00:00.000",
+    "end": "2026-11-05T20:00:00.000",
     "pokemon": [
-      "Zubat wearing a top hat",
-      "Piplup wearing a Halloween Mischief costume",
-      "Noibat wearing a headband",
-      "Pumpkaboo",
-      "Duskull",
-      "Misdreavus",
-      "Drifblim wearing a Halloween Mischief costume",
-      "Vulpix wearing a Spooky Festival costume",
-      "Gengar wearing a Tricks & Treats costume"
+      "Sandygast",
+      "Litwick",
+      "Greavard",
+      "Froakie wearing a Pokémon Halloween costume",
+      "Shuppet",
+      "Rowlet wearing a Pokémon Halloween costume",
+      "Gengar wearing a Spooky Festival costume"
     ],
-    "event": "halloween-2026-part-1"
+    "event": "halloween-2026-part-2"
   }
 ]
