@@ -4,12 +4,12 @@
     "start": "2026-11-01T10:00:00.000",
     "end": "2026-11-05T20:00:00.000",
     "pokemon": [
-      "Sandygast",
-      "Litwick",
-      "Greavard",
-      "Froakie wearing a Pokémon Halloween costume",
       "Shuppet",
+      "Litwick",
+      "Froakie wearing a Pokémon Halloween costume",
       "Rowlet wearing a Pokémon Halloween costume",
+      "Sandygast",
+      "Greavard",
       "Gengar wearing a Spooky Festival costume"
     ],
     "event": "halloween-2026-part-2"
