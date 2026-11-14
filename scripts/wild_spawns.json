@@ -1,22 +1,116 @@
 [
   {
-    "label": "Into the Wild 2026",
-    "start": "2026-11-09T10:00:00.000",
-    "end": "2026-11-13T20:00:00.000",
+    "label": "Solid as Steel Hour",
+    "start": "2026-11-14T10:00:00.000",
+    "end": "2026-11-15T18:00:00.000",
     "pokemon": [
-      "Galarian Meowth",
+      "Alolan Sandshrew",
+      "Alolan Diglett",
       "Magnemite",
-      "Horsea",
-      "Scyther",
-      "Dratini",
-      "Mareep",
-      "Mawile",
+      "Shellder",
+      "Onix",
+      "Porygon",
+      "Shuckle",
+      "Skarmory",
+      "Nosepass",
       "Aron",
-      "Bagon",
-      "Skrelp",
-      "Noibat",
-      "Togedemaru"
+      "Beldum",
+      "Piplup",
+      "Shieldon",
+      "Bronzor",
+      "Lucario",
+      "Drilbur",
+      "Ferroseed",
+      "Klink",
+      "Galarian Stunfisk",
+      "Durant",
+      "Rookidee",
+      "Tinkatink"
     ],
-    "event": "into-the-wild-2026"
+    "event": "pokemon-go-wild-area-2026-global"
+  },
+  {
+    "label": "Daring as Dragons Hour",
+    "start": "2026-11-14T10:00:00.000",
+    "end": "2026-11-15T18:00:00.000",
+    "pokemon": [
+      "Charmander",
+      "Magikarp",
+      "Dratini",
+      "Gligar",
+      "Trapinch",
+      "Swablu",
+      "Barboach",
+      "Bagon",
+      "Gible",
+      "Tynamo",
+      "Axew",
+      "Heatmor",
+      "Deino",
+      "Skrelp",
+      "Tyrunt",
+      "Amaura",
+      "Goomy",
+      "Noibat",
+      "Turtonator",
+      "Jangmo-o",
+      "Sizzlipede",
+      "Frigibax"
+    ],
+    "event": "pokemon-go-wild-area-2026-global"
+  },
+  {
+    "label": "Saturday, November 14",
+    "start": "2026-11-14T10:00:00.000",
+    "end": "2026-11-15T18:00:00.000",
+    "pokemon": [
+      "Alolan Exeggutor",
+      "Scizor",
+      "Flygon",
+      "Walrein",
+      "Metagross",
+      "Empoleon",
+      "Magnezone",
+      "Conkeldurr",
+      "Haxorus"
+    ],
+    "event": "pokemon-go-wild-area-2026-global"
+  },
+  {
+    "label": "Sunday, November 15",
+    "start": "2026-11-14T10:00:00.000",
+    "end": "2026-11-15T18:00:00.000",
+    "pokemon": [
+      "Azumarill",
+      "Kingdra",
+      "Aggron",
+      "Ferrothorn",
+      "Hydreigon",
+      "Goodra",
+      "Noivern",
+      "Tinkaton",
+      "Clodsire",
+      "Alolan Exeggutor",
+      "Scizor",
+      "Flygon",
+      "Empoleon",
+      "Magnezone",
+      "Conkeldurr"
+    ],
+    "event": "pokemon-go-wild-area-2026-global"
+  },
+  {
+    "label": "Ticket Holder Incense Encounters",
+    "start": "2026-11-14T10:00:00.000",
+    "end": "2026-11-15T18:00:00.000",
+    "pokemon": [
+      "Unown W",
+      "Unown I",
+      "Unown L",
+      "Unown D",
+      "Latias",
+      "Latios"
+    ],
+    "event": "pokemon-go-wild-area-2026-global"
   }
 ]
