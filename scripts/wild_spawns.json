@@ -112,5 +112,14 @@
       "Latios"
     ],
     "event": "pokemon-go-wild-area-2026-global"
+  },
+  {
+    "label": "Minior Showers: Leonids 2026",
+    "start": "2026-11-14T17:00:00.000",
+    "end": "2026-11-19T23:59:00.000",
+    "pokemon": [
+      "Minior (Meteor Form)"
+    ],
+    "event": "minior-showers-leonids-2026"
   }
 ]
