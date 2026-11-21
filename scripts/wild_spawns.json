@@ -1,5 +1,14 @@
 [
   {
+    "label": "Pawniard Community Day",
+    "start": "2026-11-21T14:00:00.000",
+    "end": "2026-11-21T17:00:00.000",
+    "pokemon": [
+      "Pawniard"
+    ],
+    "event": "november-communityday2026"
+  },
+  {
     "label": "Dynamax Trails",
     "start": "2026-11-16T10:00:00.000",
     "end": "2026-11-23T20:00:00.000",
